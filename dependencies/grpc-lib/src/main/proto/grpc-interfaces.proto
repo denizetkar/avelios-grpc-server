@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.avelios.grpc.library";
+option java_outer_classname = "GrpcInterfaces";
+
+// Schema of the HOSPITAL table.
+message Hospital {
+    int64 id = 1;
+    string name = 2;
+    string address = 3;
+    int32 patient_capacity = 4;
+}
+
+// Schema of the PATIENT table.
+message Patient {
+    int64 id = 1;
+    string name = 2;
+    string address = 3;
+    int32 age = 4;
+    string diagnosis = 5;
+}
+
+// All request and response types.
+
+// --------------- Hospital types --------------------
+
+message CreateHospitalRequest {
+    // The id must not be given, and will be returned in the reply.
+    Hospital hospital = 1;
+}
+message CreateHospitalReply {
+    int64 hospital_id = 1;
+    bool success = 2;
+}
+
+message ModifyHospitalRequest {
+    // Contains the id of the hospital to modify, as well as all fields to be modified.
+    Hospital hospital = 1;
+}
+message ModifyHospitalReply {
+    bool success = 1;
+}
+
+message DeleteHospitalRequest {
+    int64 hospital_id = 1;
+}
+message DeleteHospitalReply {
+    bool success = 1;
+}
+
+message ListHospitalsReply {
+    repeated Hospital hospitals = 1;
+}
+
+// --------------- Patient types --------------------
+
+message CreatePatientRequest {
+    // The id must not be given, and will be returned in the reply.
+    Patient patient = 1;
+}
+message CreatePatientReply {
+    int64 patient_id = 1;
+    bool success = 2;
+}
+
+message ModifyPatientRequest {
+    // Contains the id of the patient to modify, as well as all fields to be modified.
+    Patient patient = 1;
+}
+message ModifyPatientReply {
+    bool success = 1;
+}
+
+message DeletePatientRequest {
+    int64 patient_id = 1;
+}
+message DeletePatientReply {
+    bool success = 1;
+}
+
+message ListPatientsReply {
+    repeated Patient patients = 1;
+}
+
+// --------------- Hospital-Patient types --------------------
+
+message RegisterPatientRequest {
+    int64 patient_id = 1;
+    int64 hospital_id = 2;
+}
+message RegisterPatientReply {
+    bool success = 1;
+}
+
+message ListPatientsOfHospitalRequest {
+    int64 hospital_id = 1;
+}
+message ListPatientsOfHospitalReply {
+    repeated Patient patients = 1;
+}
+
+message ListHospitalsOfPatientRequest {
+    int64 patient_id = 1;
+}
+message ListHospitalsOfPatientReply {
+    repeated Hospital hospitals = 1;
+}
+
+// Avelios hospital-patient system.
+
+service HospitalPatient {
+    // Hospital RPCs.
+    rpc CreateHospital (CreateHospitalRequest) returns (CreateHospitalReply);
+    rpc ModifyHospital (ModifyHospitalRequest) returns (ModifyHospitalReply);
+    rpc DeleteHospital (DeleteHospitalRequest) returns (DeleteHospitalReply);
+    rpc ListHospitals (google.protobuf.Empty) returns (ListHospitalsReply);
+    // Patient RPCs.
+    rpc CreatePatient (CreatePatientRequest) returns (CreatePatientReply);
+    rpc ModifyPatient (ModifyPatientRequest) returns (ModifyPatientReply);
+    rpc DeletePatient (DeletePatientRequest) returns (DeletePatientReply);
+    rpc ListPatients (google.protobuf.Empty) returns (ListPatientsReply);
+    // Hospital-Patient RPCs.
+    rpc RegisterPatient (RegisterPatientRequest) returns (RegisterPatientReply);
+    rpc ListPatientsOfHospital (ListPatientsOfHospitalRequest) returns (ListPatientsOfHospitalReply);
+    rpc ListHospitalsOfPatient (ListHospitalsOfPatientRequest) returns (ListHospitalsOfPatientReply);
+}
